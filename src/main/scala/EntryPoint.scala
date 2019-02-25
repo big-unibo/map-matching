@@ -72,12 +72,16 @@ object EntryPoint extends App {
     val numCores = 6
     val numRepartition = numExecutor*numCores*3
 
+    if (args.size < 5) {
+      throw new IllegalArgumentException("Not enough parameters. Example usage: alpha=4 beta=10 tau=100 theta=4 gamma=200")
+    }
+
     val PAR_ALPHA = args(0).split("=")(1).toInt
     val PAR_BETA = args(1).split("=")(1).toInt
     val PAR_TAU = args(2).split("=")(1).toInt
     val PAR_THETA = args(3).split("=")(1).toInt
     val PAR_GAMMA = args(4).split("=")(1)
-    val PAR_TOP50 = args(5).split("=")(1)=="50"
+    val PAR_TOP50 = args.size == 6
 
     val spark = SparkSession.builder
       .config("spark.memory.offHeap.enabled", value = true)

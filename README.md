@@ -7,13 +7,19 @@ This implementation is based on Apache Spark 2.1 and GeoSpark 1.1.3.
 
 ## Dataset
 
-
+TBD
 
 ## How to run
 
 0. Build the project: `./gradlew.bat`
-1. Deploy the `build/libs/BIG-map-matching_all.jar` to the cluster
-2. Run: `spark-submit -jar BIG-map-matching_all.jar`
+1. Deploy the `build/libs/BIG-map-matching-all.jar` to the cluster
+2. Run: 
+```
+spark2-submit \
+    --class "EntryPoint" \
+    ~/path/to/BIG-map-matching-all.jar \
+    alpha=4 beta=10 tau=100 theta=4 gamma=200
+```
 
 ## References 
 
