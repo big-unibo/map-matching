@@ -5,6 +5,16 @@ This is an extension of Luo et al., 2016 [1], i.e., an existing serial algorithm
 
 This implementation is based on Apache Spark 2.1 and GeoSpark 1.1.3.
 
-# References 
+## Dataset
+
+
+
+## How to run
+
+0. Build the project: `./gradlew.bat`
+1. Deploy the `build/libs/BIG-map-matching_all.jar` to the cluster
+2. Run: `spark-submit -jar BIG-map-matching_all.jar`
+
+## References 
 
 [1] An Luo, Shenghua Chen, and Bin Xv. Enhanced map-matching algorithm with a hidden markov model for mobile phone positioning. ISPRS Int. J. Geo-Information, 6(11):327, 2017.
