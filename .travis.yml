@@ -1,3 +1,9 @@
 language: scala
+before_cache:
+  - rm -fr  $HOME/.gradle/caches/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 script:
    - chmod +x ./gradlew
