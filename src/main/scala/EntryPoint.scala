@@ -583,7 +583,7 @@ object EntryPoint extends App {
             "group by a.customid,a.trajid" +
             ") b " +
             "order by b.numPointOfTrajInside DESC " +
-            "limit 50") //ENRICO - quante traiettorie? altrimenti usa trajFiltered
+            "limit 50")
         //trajInsideMilanCenter.cache()
         //trajInsideMilanCenter.count()
         //trajInsideMilanCenter.show(false)
@@ -699,7 +699,7 @@ object EntryPoint extends App {
           |        FROM convGeoRoadDF gr JOIN convGeoTrajFiltered tf ON ST_Distance(tf.geoPoint, gr.geoElement) <= """+PAR_TAU+"""
           |    ) b
           |) c
-          |WHERE c.ranko <= """+PAR_ALPHA+""" """).stripMargin).cache() //ENRICO tau e alpha??
+          |WHERE c.ranko <= """+PAR_ALPHA+""" """).stripMargin).cache()
       /*CALCOLO VICINATO CON CELLE, SHUFFLE MINORE
         val top10streetForeachCell = spark.sql(
           """SELECT c.roadID,c.geoElement,c.pointInfo,c.latitude,c.longitude
@@ -729,8 +729,6 @@ object EntryPoint extends App {
             |) c""".stripMargin)
       */
 
-      queryDF.count() // ENRICO STEP A
-
       //CALCOLO VICINATO TRA STRADE CON SPARKSQL E TENTATIVI CON GEOSPARKSQL
       //queryDF.cache() //RIUTILIZZANDO QUESTO ELEMNTO SIA PER STRADE CANDIDATE CHE POI PER VITERBI LO CACHO PER NON RICALCOLARLO DUE VOLTE
       //queryDF.count()
@@ -744,8 +742,8 @@ object EntryPoint extends App {
       //val segmentNeighborhood = convGeoRoadDF.join(segmentRoadInterest,convGeoRoadDF("roadID")===segmentRoadInterest("roadID")).select(convGeoRoadDF("roadID"),convGeoRoadDF("lenght"),convGeoRoadDF("geoElement"))
       //segmentNeighborhood.count()
       //segmentNeighborhood.show()
-      val deepSearch = PAR_THETA // ENRICO theta
-      val distanceSoglia = PAR_GAMMA // ENERICO gamma
+      val deepSearch = PAR_THETA
+      val distanceSoglia = PAR_GAMMA
       segmentNeighborhood.createOrReplaceTempView("segsSelectedNeigh")
       //spark.sqlContext.cacheTable("segsSelectedNeigh")
      /* val createPaths1 = spark.sql(createOmegaJoin("segsSelectedNeigh","completeNeighborhood",2))
@@ -766,8 +764,6 @@ object EntryPoint extends App {
 
       //val createPaths = spark.sql(createOmegaLeftJoin("segsSelectedNeigh","completeNeighborhood",deepSearch,distanceSoglia))
       val createPaths = spark.sql(createOmegaLeftJoin("completeNeighborhood","completeNeighborhood",deepSearch,distanceSoglia)).cache()
-
-    createPaths.count() // ENRICO STEP PRECALCOLO
 
       //val pino = segmentNeighborhood.join(broadcast(firstJoin),segmentNeighborhood("roadIDAttigua") === firstJoin("roadID"),"leftouter")
 
@@ -831,7 +827,7 @@ object EntryPoint extends App {
           .agg(sort_array(collect_list("pointWithRoads"))
           .as("trajectoryWithRoads"))
           .cache()
-      allTrajectoryWithAllInfoDF.count() //ENRICO step B
+
       //grupponespartwo.show(200)
 
       //CREO IL CONVERTITORE E LO BROADCASTO PERCHè SARà USATO DENTRO AL MAP DELL'RDD
@@ -960,7 +956,7 @@ object EntryPoint extends App {
         val trajid:Int = z.getAs[Int]("trajid")
         var numberOfPointTrajCounter = 0
         val trajectoryWithCandidateRoads:Seq[Row] = z.getAs[Seq[Row]]("trajectoryWithRoads")
-        val parametroRumoreGPS =10 //ENRICO beta??
+        val parametroRumoreGPS =10
         trajectoryWithCandidateRoads.foreach( x=> {
           val timest:Int = x.getAs[Int]("timest")
           val latitude:Double = x.getAs[Double]("latitude")
@@ -997,7 +993,7 @@ object EntryPoint extends App {
           numberOfPointTrajCounter += 1
         })
         //PROBABILITà STATI INIZIALI EQUIVALENTI COME DA PAPER
-        val k = 1.0f/10 // ENRICO perchè 1/10 ???
+        val k = 1.0f/10
         initialStateDistribution = initialStateDistribution.map(m=>(m._1,k.toDouble))
         //initialStateDistribution.foreach(x=>println(x))
         //emissionStateMatrix.foreach(x=>println(x))
@@ -1006,7 +1002,7 @@ object EntryPoint extends App {
 
 
         // 1/beta * e alla - valore assoluto(haversine tra i punti - sommatoria percorso considerando le proiezioni dei punti nei segmenti iniziali)
-        val Betadafare:Double = PAR_BETA //𝛽 = 1/ln(2) mediant 􀀲􀀟‖𝑧𝑡 − 𝑧𝑡+1‖𝑔𝑟𝑒𝑎𝑡 𝑐𝑖𝑟𝑐𝑙𝑒− 􀀌𝑥𝑡,𝑖∗ − 𝑥𝑡+1,𝑗 ∗􀀌𝑟𝑜𝑢𝑡𝑒 􀀯􀀳 //ENRICO beta??
+        val Betadafare:Double = PAR_BETA //𝛽 = 1/ln(2) mediant 􀀲􀀟‖𝑧𝑡 − 𝑧𝑡+1‖𝑔𝑟𝑒𝑎𝑡 𝑐𝑖𝑟𝑐𝑙𝑒− 􀀌𝑥𝑡,𝑖∗ − 𝑥𝑡+1,𝑗 ∗􀀌𝑟𝑜𝑢𝑡𝑒 􀀯􀀳
         var newStateProbMatrix:Map[(Int,String),Map[String,Double]] = Map()
         //PER OGNI OSSERVAZIONE FINO ALLA PENULTIMA
         for(i <- 0 to obsMap.length-2){
@@ -1079,7 +1075,6 @@ object EntryPoint extends App {
         realResult.map(y=>(customid,trajid,y._1,y._2))
         //resultListTuples
       }).cache()
-      resutlViterbis.count() // ENRICO STEP C
 
       //SALVATAGGIO RISULTATO MAPMATCHING SU TABELLA HIVE
       val resultWithColumnNames: DataFrame = resutlViterbis.toDF("customid","trajid","timest","roadID")
