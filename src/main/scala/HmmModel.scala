@@ -1,34 +1,30 @@
-import java.util.Random
-
-import scala.collection.mutable
-import scala.collection.mutable.HashMap
-
 /**
+  * class that represent a Hidden Markov Model
   */
 class HmmModel {
 
 
-  /* Numero degli stati nascosti per ogni osservazione*/
+  /* number of hidden states foreach observation*/
   private var numHiddenStates:Int = 0
 
   /*
-   * Mappa di transizioni tra stati hidden
+   * matrix that represent transition matrix
    */
   private var A:Map[(Int,String),Map[String,Double]] = _
 
   /*
-   * Mappa di osservazione tra osservazione e stati candidati
+   * matrix that represent emission matrix
    */
   private var B:Map[String,Map[String,Double]] = _
 
   /*
-   * Mappa contenente i valori degli stati considerati iniziali
+   * map that contains initial probabilities
    */
   private var Pi:Map[String,Double] = _
 
 
   /**
-    * Genera un HMM con i parametri specificati
+    * Generates a Hidden Markov Model with specified parameters
     */
   def this(A:Map[(Int,String),Map[String,Double]],B:Map[String,Map[String,Double]],Pi:Map[String,Double],numHiddenStates:Int) {
     this()

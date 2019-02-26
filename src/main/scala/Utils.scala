@@ -1,7 +1,4 @@
 import scala.math._
-import java.math.BigDecimal
-
-import scala.collection.mutable.ListBuffer;
 
 /**
   * Utility object.

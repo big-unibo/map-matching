@@ -1,12 +1,12 @@
 /**
-  * Classe che rappresenta un punto GPS
-  * @param lat latitudine del punto
-  * @param lon longitudine del punto
+  * Class that represent a GPS point
+  * @param lat latitude of the point
+  * @param lon longitude of the point
   */
 case class Location(lat: Double, lon: Double)
 
 /**
-  *
+  * represent an utility object used to geometrical calculus
   */
 trait DistanceCalculator {
   def calculateDistanceInMeter(userLocation: Location, warehouseLocation: Location): Double
@@ -19,10 +19,10 @@ case class DistanceCalculatorImpl() extends DistanceCalculator {
     private val AVERAGE_RADIUS_OF_EARTH_KM = 6371
 
   /**
-    * Metodo utilizzato per calcolare la distanza di Haversine
-    * @param userLocation punto di partenza
-    * @param warehouseLocation punto di fine
-    * @return distanza in METRI tra i due punti
+    * Method used to calculate Haversine distance
+    * @param userLocation starting point
+    * @param warehouseLocation ending point
+    * @return METER distance between the two points
     */
     override def calculateDistanceInMeter(userLocation: Location, warehouseLocation: Location): Double = {
     val latDistance = Math.toRadians(userLocation.lat - warehouseLocation.lat)
@@ -38,11 +38,11 @@ case class DistanceCalculatorImpl() extends DistanceCalculator {
   }
 
   /**
-    * Metodo che cerca la proiezione ortogonale del punto sulla retta
-    * @param line1 inizio retta
-    * @param line2 fine retta
-    * @param pt punto che verrà proiettato sulla retta
-    * @return option che contiene il punto se è possibile proiettare il punto ortonogonalmente, vuoto altrimenti
+    * Method used to find orthogonal projection of a point on a line
+    * @param line1 starting point of the line
+    * @param line2 ending point of the line
+    * @param pt point that will be projected on the line
+    * @return option that contains the projection of the point if is possible, otherwise an empty
     */
   override def pointOnLine(line1:Location, line2:Location, pt:Location):Option[Location] = {
     var isValid:Boolean = false
